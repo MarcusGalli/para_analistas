@@ -56,7 +56,11 @@ def conectar(cfg, apelido):
     lib = cfg.get("oracle", {}).get("instant_client")
     if lib and oracledb.is_thin_mode():
         oracledb.init_oracle_client(lib_dir=lib)
-    conn = oracledb.connect(user=banco["usuario"], password=banco["senha"], dsn=banco["dsn"])
+    dsn = re.sub(r"^jdbc:oracle:thin:@(//)?", "", banco["dsn"])  # aceita DSN copiado de configs Java
+    try:
+        conn = oracledb.connect(user=banco["usuario"], password=banco["senha"], dsn=dsn)
+    except oracledb.Error as e:
+        sys.exit(f"Falha ao conectar em '{apelido}': {e}")
     conn.cursor().execute("SET TRANSACTION READ ONLY")
     return conn
 
