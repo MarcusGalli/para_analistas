@@ -5,31 +5,19 @@ projetos, consultar os bancos do cliente e gerar documentos que vao para o SVN.
 
 As regras que o Claude segue estao em [`CLAUDE.md`](CLAUDE.md).
 
-## Pre-requisitos (uma vez por maquina)
+## Comece por aqui
 
-| Ferramenta | Para que | Como |
-|---|---|---|
-| Claude Code | — | https://claude.com/claude-code |
-| Git | clonar projetos | https://git-scm.com |
-| uv | rodar `ferramentas/db.py` e instalar skills (instala Python sozinho) | `winget install astral-sh.uv` |
-| Node.js 18 ou mais novo | instalar skills via `npx` | `winget install OpenJS.NodeJS.LTS` |
-| SVN de linha de comando | Claude ler/enviar documentos ao SVN | TortoiseSVN marcando **"command line client tools"** na instalacao |
-| Oracle Instant Client (opcional) | so para bancos Oracle antigos que recusam o modo thin | descompactar em `C:\oracle\` |
+Siga o roteiro em **[PRIMEIROS_PASSOS.md](PRIMEIROS_PASSOS.md)**. Resumo:
 
-## Primeiro uso
+1. Instale as ferramentas (Git, GitHub CLI, uv, Node 18+, TortoiseSVN com linha de comando).
+2. Clone este repositorio.
+3. Configure seus bancos em `.secrets/bancos.toml` (copiado de `bancos.toml.exemplo`).
+4. Clone seus projetos em `.projetos/`.
+5. Faca checkout do SVN de documentacao em `.SVN/`.
+6. Abra o Claude Code nesta pasta e digite **`/iniciar`**: ele confere tudo, pergunta o que
+   faltar, instala as skills e registra projetos, SVN e bancos nas fichas de `contexto/`.
 
-```bash
-git clone <url-deste-repositorio> ambiente-analista
-cd ambiente-analista
-cp .secrets/bancos.toml.exemplo .secrets/bancos.toml   # e preencha com seus acessos
-uv run ferramentas/db.py --autoteste
-uv run ferramentas/db.py --listar
-```
-
-1. Clone seus projetos em `.projetos/` e faca checkout dos SVNs em `.SVN/` (veja o README de cada pasta).
-2. Abra o Claude Code nesta pasta, aceite os plugins sugeridos e instale os demais de [`contexto/SKILLS.md`](contexto/SKILLS.md).
-3. Peca ao Claude para registrar o que voce adicionou:
-   *"registre os projetos, SVNs e bancos que eu configurei"* — ele preenche as fichas em `contexto/`.
+Adicionou um projeto, SVN ou banco depois? Rode `/iniciar` de novo.
 
 ## Skills: o que sao e quais usamos
 

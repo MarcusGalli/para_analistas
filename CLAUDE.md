@@ -15,6 +15,13 @@ Projetos, Superintendencias, Ordens de Servico (OS), orcamento e entregas.
 | `ferramentas/db.py` | Consulta somente leitura aos bancos | Sim |
 | `contexto/` | Fichas de projetos, SVN e bancos — **mantidas pelo Claude** | Sim |
 
+## Configuracao inicial
+
+O roteiro de verificacao do ambiente esta em `.claude/commands/iniciar.md` (comando `/iniciar`).
+Siga-o quando o analista rodar `/iniciar`, pedir para "verificar/configurar o ambiente", ou
+quando as fichas de `contexto/` estiverem vazias e ele pedir algo que dependa delas — nesse
+caso, sugira rodar `/iniciar` antes. O passo a passo para o analista esta em `PRIMEIROS_PASSOS.md`.
+
 ## Contexto disponivel (atualize sempre que algo mudar)
 
 @contexto/PROJETOS.md
