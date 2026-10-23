@@ -18,3 +18,6 @@ saidas/
 __pycache__/
 .~lock.*
 .claude/settings.local.json
+
+# Instrucoes pessoais do analista para o Claude (nativo do Claude Code)
+CLAUDE.local.md

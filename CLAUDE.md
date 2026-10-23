@@ -11,7 +11,7 @@ Projetos, Superintendencias, Ordens de Servico (OS), orcamento e entregas.
 | `.projetos/<nome>/` | Clones git dos projetos do cliente | Nao (local do analista) |
 | `.SVN/<nome>/` | Working copies SVN com a documentacao do cliente | Nao (local do analista) |
 | `.secrets/` | Credenciais (`bancos.toml` e outros) | Nao — nunca |
-| `saidas/` | Resultados temporarios (CSV de consultas, rascunhos) | Nao |
+| `saidas/` | Relatorios de consulta, analises, CSVs e rascunhos | Nao |
 | `ferramentas/db.py` | Consulta somente leitura aos bancos | Sim |
 | `contexto/` | Fichas de projetos, SVN e bancos — **mantidas pelo Claude** | Sim |
 
@@ -55,9 +55,10 @@ Skills recomendadas e instalacao: `contexto/SKILLS.md`.
 - Siga as convencoes do projeto (estilo, testes, estrutura) — nao as deste repositorio.
 
 ### Documentos e SVN (`.SVN/`)
-- Documento gerado (relatorio, especificacao, design/plano de skills, SQL que vale guardar) e salvo
-  **dentro da working copy SVN** do projeto, na pasta indicada em `contexto/SVN.md`.
-  Sem SVN definido para o assunto: salve em `saidas/` e avise.
+- **No SVN entram apenas entregaveis de OS** (historias de usuario, prototipos, correcoes e FIX,
+  scripts SQL de entrega, atas, manuais...), na pasta da OS indicada em `contexto/SVN.md`.
+- **Relatorios de consulta, analises, investigacoes e designs/planos de trabalho ficam so em
+  `saidas/`** (local, fora do git). So vao para o SVN se o analista pedir explicitamente.
 - Nome de arquivo: `AAAA-MM-DD-tema-curto.ext` (ex.: `2026-10-23-relatorio-titulos-pendentes.md`).
 - `svn add`/`svn commit` so depois de mostrar a lista de arquivos e o analista confirmar.
   Mensagem de commit em portugues, descrevendo o que e o documento (e a OS, quando houver).

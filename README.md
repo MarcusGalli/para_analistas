@@ -5,12 +5,16 @@ projetos, consultar os bancos do cliente e gerar documentos que vao para o SVN.
 
 As regras que o Claude segue estao em [`CLAUDE.md`](CLAUDE.md).
 
+> **Este repositorio e um seed (modelo em branco).** Cada projeto/equipe cria o seu a partir
+> dele (*Use this template* no GitHub) e preenche ali as fichas de `contexto/`. Melhorias gerais
+> (regras, `ferramentas/`, `/iniciar`) sao feitas aqui no seed.
+
 ## Comece por aqui
 
 Siga o roteiro em **[PRIMEIROS_PASSOS.md](PRIMEIROS_PASSOS.md)**. Resumo:
 
 1. Instale as ferramentas (Git, GitHub CLI, uv, Node 18+, TortoiseSVN com linha de comando).
-2. Clone este repositorio.
+2. Clone o repositorio do seu projeto ou crie um a partir deste seed.
 3. Configure seus bancos em `.secrets/bancos.toml` (copiado de `bancos.toml.exemplo`).
 4. Clone seus projetos em `.projetos/`.
 5. Faca checkout do SVN de documentacao em `.SVN/`.
@@ -46,7 +50,8 @@ Claude Code. As demais sao instaladas uma vez por maquina: peca ao Claude
 
 - "No banco `prod_legado`, quantos titulos AUTEX de 2026 estao sem integracao? Explique a consulta."
 - "Procure no projeto `<nome>` onde e feita a validacao de <regra> e explique o fluxo."
-- "Gere um relatorio em .md com o resultado e salve no SVN do projeto."
+- "Gere um relatorio em .md com o resultado em saidas/."
+- "Atualize a historia de usuario da OS 087 com essa regra e prepare o commit no SVN."
 - "Monte o script de correcao para esses registros, com conferencia antes/depois." *(voce executa)*
 
 ## Seguranca

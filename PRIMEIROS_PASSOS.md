@@ -17,14 +17,34 @@ tudo com o comando `/iniciar`.
 
 Depois de instalar, feche e abra o terminal para ele reconhecer os comandos novos.
 
-## 2. Baixe este repositorio
+## 2. Pegue o repositorio do seu projeto
+
+Este repositorio (`para_analistas`) e o **seed**: um modelo em branco. Cada projeto/equipe tem
+o seu proprio repositorio criado a partir dele, onde ficam as fichas de `contexto/` daquele
+projeto, compartilhadas pela equipe.
+
+Primeiro, login no GitHub (uma vez por maquina):
 
 ```bash
 gh auth login --hostname github.com --git-protocol https --web
 gh auth setup-git
-git clone https://github.com/MarcusGalli/para_analistas.git
-cd para_analistas
 ```
+
+**A equipe do seu projeto ja tem repositorio?** Clone o dela:
+
+```bash
+git clone https://github.com/<dono>/<repositorio-do-projeto>.git
+cd <repositorio-do-projeto>
+```
+
+**Projeto novo, ainda sem repositorio?** Crie a partir do seed (nome sugerido: `analistas-<sigla>`):
+
+```bash
+gh repo create analistas-<sigla> --template MarcusGalli/para_analistas --private --clone
+cd analistas-<sigla>
+```
+
+Pelo site: abra o `para_analistas` no GitHub → **Use this template** → **Create a new repository**.
 
 ## 3. Configure os bancos de dados
 
