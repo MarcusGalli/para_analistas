@@ -11,7 +11,8 @@ As regras que o Claude segue estao em [`CLAUDE.md`](CLAUDE.md).
 |---|---|---|
 | Claude Code | — | https://claude.com/claude-code |
 | Git | clonar projetos | https://git-scm.com |
-| uv | rodar `ferramentas/db.py` (instala Python e drivers sozinho) | `winget install astral-sh.uv` |
+| uv | rodar `ferramentas/db.py` e instalar skills (instala Python sozinho) | `winget install astral-sh.uv` |
+| Node.js 18 ou mais novo | instalar skills via `npx` | `winget install OpenJS.NodeJS.LTS` |
 | SVN de linha de comando | Claude ler/enviar documentos ao SVN | TortoiseSVN marcando **"command line client tools"** na instalacao |
 | Oracle Instant Client (opcional) | so para bancos Oracle antigos que recusam o modo thin | descompactar em `C:\oracle\` |
 
@@ -29,6 +30,29 @@ uv run ferramentas/db.py --listar
 2. Abra o Claude Code nesta pasta, aceite os plugins sugeridos e instale os demais de [`contexto/SKILLS.md`](contexto/SKILLS.md).
 3. Peca ao Claude para registrar o que voce adicionou:
    *"registre os projetos, SVNs e bancos que eu configurei"* — ele preenche as fichas em `contexto/`.
+
+## Skills: o que sao e quais usamos
+
+Uma **skill** e um pacote de instrucoes que ensina o Claude a fazer um tipo de tarefa de um jeito
+especifico. Depois de instalada, **voce nao precisa chamar nada**: basta pedir normalmente
+("reescreva esse e-mail para soar mais natural") e o Claude usa a skill quando ela se aplica.
+Se quiser forcar, digite `/` no Claude Code e escolha a skill na lista.
+
+Algumas vem como **plugin** (pacote que pode trazer varias skills e comandos). Para quem usa, nao
+muda nada.
+
+| Skill | Para que serve | Exemplo de pedido |
+|---|---|---|
+| [superpowers](https://github.com/obra/superpowers) | Da metodo ao trabalho: antes de mexer, entende o pedido, propoe um desenho, faz um plano e so entao executa. Tambem guia investigacao de bugs | "Quero criar uma tela de falhas de coleta, vamos planejar" |
+| [ponytail](https://github.com/DietrichGebert/ponytail) | Faz o Claude escrever o codigo mais simples que resolve, sem complicar | Atua sozinho sempre que ha codigo |
+| [humanizer](https://github.com/blader/humanizer) | Tira a "cara de IA" de textos: e-mails, relatorios e documentos para o cliente | "Revise esse e-mail para o cliente com a humanizer" |
+| [scrapling](https://github.com/D4Vinci/Scrapling) | Coleta dados de paginas web, inclusive paginas dificeis de ler | "Extraia a tabela de normas desta pagina para CSV" |
+| [browser-harness](https://github.com/browser-use/browser-harness) | Deixa o Claude usar o **seu** Chrome, ja logado, para navegar e preencher telas de sistemas web | "Abra o Redmine e liste minhas tarefas abertas" |
+| [notebooklm-py](https://github.com/teng-lin/notebooklm-py) | Cria cadernos no NotebookLM do Google a partir de documentos e gera resumos e audios | "Crie um caderno com os documentos da OS e gere um resumo" |
+
+Superpowers, ponytail e humanizer sao oferecidas automaticamente quando voce abre esta pasta no
+Claude Code. As demais sao instaladas uma vez por maquina: peca ao Claude
+*"instale as skills de contexto/SKILLS.md"* (comandos e detalhes em [`contexto/SKILLS.md`](contexto/SKILLS.md)).
 
 ## Exemplos de pedidos
 
