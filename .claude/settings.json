@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(uv run ferramentas/db.py:*)",
+      "Bash(svn status:*)",
+      "Bash(svn info:*)",
+      "Bash(svn log:*)",
+      "Bash(svn diff:*)",
+      "Bash(svn update:*)"
+    ],
+    "deny": [
+      "Read(./.secrets/**)",
+      "Edit(./.secrets/**)"
+    ]
+  },
+  "extraKnownMarketplaces": {
+    "ponytail": {
+      "source": { "source": "github", "repo": "DietrichGebert/ponytail" }
+    },
+    "humanizer": {
+      "source": { "source": "github", "repo": "blader/humanizer" }
+    }
+  },
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": true,
+    "ponytail@ponytail": true,
+    "humanizer@humanizer": true
+  }
+}

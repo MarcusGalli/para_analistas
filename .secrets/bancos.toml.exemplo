@@ -1,0 +1,20 @@
+# Copie para .secrets/bancos.toml e preencha. Cada [bancos.<apelido>] e uma conexao.
+# O apelido e o nome usado no Claude e no script:  uv run ferramentas/db.py <apelido> "SELECT ..."
+# Descricao, ambiente e schemas de cada apelido ficam em contexto/BANCOS.md (sem senha).
+
+# Opcional — Oracle Instant Client. Necessario (modo "thick") para bancos Oracle antigos
+# que recusam o modo "thin" (erro DPY-3010/DPY-3015). Se nao precisar, apague a linha.
+[oracle]
+instant_client = "C:/oracle/instantclient_19_18"
+
+[bancos.prod_legado]
+tipo = "oracle"                       # por enquanto so oracle e suportado
+dsn = "servidor.cliente.gov.br:1521/servico"
+usuario = "USUARIO_LEITURA"
+senha = "troque-me"
+
+[bancos.homolog_sistema]
+tipo = "oracle"
+dsn = "servidor-hml.cliente.gov.br:1521/servico_hml"
+usuario = "USUARIO"
+senha = "troque-me"

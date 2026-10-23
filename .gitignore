@@ -1,0 +1,20 @@
+# Clones locais de cada analista (codigo-fonte do cliente)
+.projetos/*
+!.projetos/README.md
+
+# Working copies SVN de cada analista (documentacao do cliente)
+.SVN/*
+!.SVN/README.md
+
+# Credenciais: NUNCA versionar. So o README e os modelos .exemplo sobem.
+.secrets/*
+!.secrets/README.md
+!.secrets/*.exemplo
+
+# Resultados de consultas (CSV etc.) — locais e descartaveis
+saidas/
+
+# Lixo de ferramentas
+__pycache__/
+.~lock.*
+.claude/settings.local.json
