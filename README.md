@@ -5,9 +5,10 @@ projetos, consultar os bancos do cliente e gerar documentos que vao para o SVN.
 
 As regras que o Claude segue estao em [`CLAUDE.md`](CLAUDE.md).
 
-> **Este repositorio e um seed (modelo em branco).** Cada projeto/equipe cria o seu a partir
-> dele (*Use this template* no GitHub) e preenche ali as fichas de `contexto/`. Melhorias gerais
-> (regras, `ferramentas/`, `/iniciar`) sao feitas aqui no seed.
+> **Este repositorio e um seed (modelo em branco).** Clone-o e rode `/iniciar`: o Claude cria o
+> repositorio do seu projeto (`analistas-<sigla>`) e preenche ali as fichas de `contexto/`.
+> Melhorias gerais (regras, `ferramentas/`, `/iniciar`) sao feitas aqui no seed; no repositorio
+> do projeto, traga-as com `git pull seed main`.
 
 ## Comece por aqui
 

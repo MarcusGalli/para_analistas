@@ -10,6 +10,34 @@ que ele faca algo. Nunca peca senha ou token no chat: o analista edita `.secrets
 
 Execute as etapas na ordem. Em cada uma: verifique, corrija o que puder, pergunte o que faltar.
 
+## 0. Repositorio do projeto
+
+Rode `git remote get-url origin`. Se **nao** terminar em `/para_analistas.git` (ou `/para_analistas`),
+esta pasta ja e o repositorio de um projeto: pule para a etapa 1.
+
+Se terminar, esta pasta e um clone do **seed** (modelo em branco). Explique isso ao analista: as
+fichas que vamos preencher sao do projeto dele e nao podem ir para o seed. Entao:
+
+1. Pergunte se a equipe do projeto **ja tem** um repositorio criado a partir do seed.
+   - Sim: oriente a clonar o da equipe em outra pasta (`git clone <url>`), abrir o Claude Code
+     nela e rodar `/iniciar` la. Encerre aqui.
+2. Nao: confirme o login com `gh auth status` (se falhar, oriente
+   `gh auth login --hostname github.com --git-protocol https --web` e `gh auth setup-git`).
+3. Pergunte a sigla do projeto/superintendencia e sugira o nome `analistas-<sigla>` (minusculas).
+   Pergunte o dono: a conta do analista (`gh api user -q .login`) ou uma organizacao.
+4. Com o OK dele, crie o repositorio privado e mude a pasta para ele, mantendo o seed como `seed`:
+
+   ```bash
+   gh repo create <dono>/analistas-<sigla> --private --description "Ambiente dos analistas <SIGLA> com o Claude (seed para_analistas)"
+   git remote rename origin seed
+   git remote add origin https://github.com/<dono>/analistas-<sigla>.git
+   git push -u origin main
+   ```
+
+   (O repositorio novo recebe o historico do seed; assim melhorias futuras entram com `git pull seed main`.)
+5. No topo do `README.md`, troque o aviso "Este repositorio e um seed" por uma frase dizendo que
+   este e o repositorio do projeto `<SIGLA>`, criado a partir do seed. Faca commit e push.
+
 ## 1. Ferramentas
 
 Verifique (sem instalar nada ainda): `git --version`, `uv --version`, `svn --version --quiet`,
@@ -61,5 +89,6 @@ se pode instalar ou se o analista prefere fazer.
 ## 6. Resumo
 
 Termine com uma tabela: etapa | situacao (OK / pendente / com erro) | o que falta fazer.
-Liste as fichas de `contexto/` que voce criou ou alterou. Se tudo estiver OK, sugira 2 ou 3
+Liste as fichas de `contexto/` que voce criou ou alterou e ofereca fazer commit e push delas no
+repositorio do projeto (nunca no seed). Se tudo estiver OK, sugira 2 ou 3
 pedidos de exemplo usando os projetos e bancos que ele acabou de configurar.

@@ -37,14 +37,19 @@ git clone https://github.com/<dono>/<repositorio-do-projeto>.git
 cd <repositorio-do-projeto>
 ```
 
-**Projeto novo, ainda sem repositorio?** Crie a partir do seed (nome sugerido: `analistas-<sigla>`):
+**Projeto novo, ainda sem repositorio?** Clone o seed:
 
 ```bash
-gh repo create analistas-<sigla> --template MarcusGalli/para_analistas --private --clone
+git clone https://github.com/MarcusGalli/para_analistas.git analistas-<sigla>
 cd analistas-<sigla>
 ```
 
-Pelo site: abra o `para_analistas` no GitHub → **Use this template** → **Create a new repository**.
+Nao se preocupe com o repositorio do projeto agora: ao rodar `/iniciar` (passo 6), o Claude
+percebe que a pasta veio do seed, sugere o nome `analistas-<sigla>`, cria o repositorio privado
+do seu projeto e passa a pasta para ele. O seed continua ligado como `seed`, para receber melhorias.
+
+> Como os passos 3 a 5 so criam arquivos locais (ignorados pelo git), voce pode faze-los antes
+> ou deixar o `/iniciar` guiar tudo.
 
 ## 3. Configure os bancos de dados
 
