@@ -3,7 +3,7 @@
 - **Projeto:** <projeto> · **Tipo:** <tela nova | alteracao>
 - **Tela base / alterada:** <nome> — `<arquivo-fonte>` (<rota>)
 - **Pedido original:** <texto do analista>
-- **Destino do pacote:** <saidas/mockups/<tema>/entrega | pasta informada por quem chamou>
+- **Destino do pacote:** <saidas/mockups/AAAA-MM-DD-<tema>/entrega | pasta informada por quem chamou>
 
 ## Decisoes
 - <pergunta → resposta do analista>
