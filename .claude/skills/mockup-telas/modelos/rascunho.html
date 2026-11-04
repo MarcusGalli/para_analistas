@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>[TITULO DA TELA] — mockup vN</title>
+<!-- Caminho relativo de saidas/mockups/<tema>/ ate o kit do projeto -->
+<link rel="stylesheet" href="../../../contexto/telas/[PROJETO]/kit/kit.css">
+<link rel="stylesheet" href="../../../contexto/telas/[PROJETO]/kit/mockup-base.css">
+</head>
+<body>
+<!-- Copie o layout-base (menu, cabecalho) de kit/componentes.html e coloque os estados dentro da area de conteudo. -->
+
+<section class="estado" id="listagem">
+  <!-- estado 1 -->
+</section>
+
+<section class="estado" id="edicao">
+  <!-- estado 2; marque mudancas assim: <div class="mk-novo" data-mk="novo">...</div> -->
+</section>
+
+<nav class="mk-revisao mk-barra">
+  <a href="#listagem">listagem</a>
+  <a href="#edicao">edicao</a>
+  <button onclick="document.body.classList.toggle('mk-sem-marcas')">marcacoes</button>
+</nav>
+</body>
+</html>
