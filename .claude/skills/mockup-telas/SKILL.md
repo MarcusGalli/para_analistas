@@ -35,7 +35,8 @@ Em andamento = existe `saidas/mockups/*/NOTAS.md` recente; na duvida, pergunte q
 
 ## 1. Levantar
 1. Leia a ficha do projeto em `contexto/PROJETOS.md` e o README/CLAUDE.md do projeto.
-2. Detecte stack e biblioteca de UI (`package.json`, `angular.json`, `vite.config.*`...).
+2. Detecte stack e biblioteca de UI (`package.json`, `angular.json`, `vite.config.*`...). Stack nao reconhecido → pergunte ao analista onde
+   ficam as telas e os estilos.
 3. Rotas e menus → `contexto/telas/<projeto>/CATALOGO.md` (modelo `CATALOGO.md`). Use rotas e
    componentes de menu; o nome da tela e o que o usuario ve (titulo/breadcrumb), nao o nome da classe.
 4. Padroes → `contexto/telas/<projeto>/PADROES.md` (modelo `PADROES.md`). Leia ao menos: layout-base,
@@ -43,17 +44,23 @@ Em andamento = existe `saidas/mockups/*/NOTAS.md` recente; na duvida, pergunte q
 5. Pergunte: "Voce tem acesso ao sistema rodando (homologacao)? Se sim, me passe a URL; voce faz o
    login no navegador." Monte `kit/kit.css` pela primeira fonte que funcionar e registre qual foi:
    1. **Sistema rodando:** abra a URL no navegador embutido, espere o analista logar, extraia o CSS
-      compilado (`[...document.styleSheets].map(s=>[...s.cssRules].map(r=>r.cssText).join('\n'))`
-      via javascript_tool; folhas externas: baixe pelo href). Tire prints de 3-5 telas do catalogo e
-      salve em `kit/assets/ref-<tela>.png`.
+      compilado via javascript_tool, com try/catch por folha (folha de outra origem lanca SecurityError):
+      `(()=>{const ok=[],ruim=[];for(const s of document.styleSheets){try{ok.push([...s.cssRules].map(r=>r.cssText).join('\n'))}catch(e){ruim.push(s.href)}}return{css:ok.join('\n'),baixar:ruim}})()`
+      e baixe pelo href as folhas de `baixar`. Tire prints de 3-5 telas do catalogo e salve em
+      `kit/assets/ref-<tela>.png`. Os prints de referencia vao para o repositorio da equipe: escolha
+      telas sem dado pessoal ou mascare.
    2. **Repositorio:** CSS/SCSS global e temas do proprio projeto (SCSS: copie so o que for CSS valido
       ou converta variaveis em valores).
    3. **Pacote publicado:** tema em `node_modules` (ausente no clone) → versao exata em
       `package-lock.json` (ou `package.json`) e baixe de `https://cdn.jsdelivr.net/npm/<pacote>@<versao>/<caminho>`
       (ex.: `@angular/material@8.2.3/prebuilt-themes/indigo-pink.css`). Fontes e icones da mesma forma
-      para `kit/assets/`.
+      para `kit/assets/`. Bibliotecas que injetam o CSS dos componentes em tempo de execucao (Angular
+      Material, MUI...) trazem no tema pre-compilado so cores e tipografia; os estilos estruturais dos
+      componentes ficam nos bundles JS. Extraia tambem esses estilos (ex.: as strings `styles:[...]` em
+      `@angular/material@<versao>/bundles/material-*.umd.js`, pela CDN) e, se houver sistema rodando,
+      prefira fortemente a fonte 1 (o `document.styleSheets` ja inclui o CSS injetado).
    4. **Tokens:** cores, fontes e espacamentos lidos no codigo → CSS escrito por voce. Avise que a
-      fidelidade e menor.
+      fidelidade e menor e coloque um aviso visivel de fidelidade menor no `amostra.html`.
    Concatene em `kit.css`: tema → estilos globais do projeto → estilos proprios dos componentes usados.
 6. Copie `modelos/mockup-base.css` para `kit/mockup-base.css`. Escreva `kit/componentes.html`: cada peca
    recorrente (layout com menu e cabecalho, listagem com filtros e paginacao, formulario, modal, botoes,
@@ -64,7 +71,7 @@ Em andamento = existe `saidas/mockups/*/NOTAS.md` recente; na duvida, pergunte q
 7. Abra a amostra para o analista (navegador embutido, `file:///...`) e pergunte: "Parece o sistema?
    O que esta diferente?" Corrija ate ele confirmar. **Sem confirmacao o levantamento nao termina.**
 8. Grave no PADROES.md o commit (`git -C .projetos/<projeto> rev-parse --short HEAD`) e a data, e
-   acrescente na ficha do projeto em `contexto/PROJETOS.md`:
+   preencha/atualize a linha Mockups da ficha do projeto em `contexto/PROJETOS.md`:
    `- **Mockups:** contexto/telas/<projeto>/ (levantado no commit <hash>, AAAA-MM-DD)`.
 
 ## 2. Nova
@@ -75,6 +82,9 @@ Em andamento = existe `saidas/mockups/*/NOTAS.md` recente; na duvida, pergunte q
    (lista, edicao, modal, erro de validacao, vazio...) e a barra `mk-revisao` com um link por estado.
    - Os `<section class="estado">` devem ser irmaos diretos, sem outro `<section>` antes deles no mesmo pai (o primeiro estado aparece por `:first-of-type`).
    - Marcacao `mk-*` nao aparece em `input`/`img`: marque o elemento que envolve o campo.
+   - Os estados sao secoes exclusivas: um estado de modal deve repetir a tela que fica atras dele.
+   - `src` de imagens copiado de `kit/componentes.html` (`assets/x.png`, relativo a `kit/`) deve virar
+     `../../../contexto/telas/<projeto>/kit/assets/...` nos rascunhos (`url()` dentro do `kit.css` esta ok).
 4. Abra `v1.html` para o analista e pergunte o que ajustar.
 
 ## 3. Alterar
@@ -82,7 +92,8 @@ Em andamento = existe `saidas/mockups/*/NOTAS.md` recente; na duvida, pergunte q
 2. **Confirme antes de seguir**: "E esta? <Menu > caminho>, rota <rota>, arquivo `<arquivo>`" + print
    de referencia, se houver. Varias candidatas → ate 3; nunca escolha sozinho.
 3. Gere `atual.html` (como a tela e hoje, lida do template e do kit) e `v1.html` com a mudanca, marcando
-   cada diferenca com `class="mk-novo|mk-alterado|mk-removido" data-mk="<texto curto>"`.
+   cada diferenca com `class="mk-novo|mk-alterado|mk-removido" data-mk="<texto curto>"`. `src` de imagens
+   do `kit/componentes.html` (`assets/x.png`) vira `../../../contexto/telas/<projeto>/kit/assets/...`.
 4. Registre no NOTAS.md e abra os dois para o analista comparar.
 
 ## 4. Ajustar
@@ -93,13 +104,16 @@ e por que, e mostre. Nunca sobrescreva versoes anteriores.
 1. Confirme a versao aprovada e se a entrega vai **com ou sem** marcacoes (padrao: sem).
 2. Prepare `vFINAL.html` = versao aprovada com `<body class="mk-sem-marcas">` (ou sem a classe, se pediram
    marcacoes).
-3. Destino: `saidas/mockups/<tema>/entrega/` ou a pasta informada por quem chamou a skill.
+3. Destino: `saidas/mockups/AAAA-MM-DD-<tema>/entrega/` ou a pasta informada por quem chamou a skill.
 4. Rode:
    ```bash
-   uv run ferramentas/mockup.py empacotar saidas/mockups/<tema>/vFINAL.html <destino>/mockup.html
+   uv run ferramentas/mockup.py empacotar saidas/mockups/AAAA-MM-DD-<tema>/vFINAL.html <destino>/mockup.html
    uv run ferramentas/mockup.py prints <destino>/mockup.html <destino>/telas <estado1> <estado2> ...
    ```
    (estados na ordem da barra de revisao). `AVISO` de referencia nao encontrada → corrija e rode de novo.
+   `AVISO - referencias externas` (fontes/icones da internet, ex.: Google Fonts, Material Icons) → baixe
+   para `kit/assets/`, referencie localmente e rode de novo. Se `prints` disser que o Edge nao foi
+   encontrado, entregue HTML + especificacao assim mesmo e passe ao analista o comando que ele imprimiu.
 5. Abra 1-2 PNGs (Read) e confira que estao certos e sem a barra de revisao.
 6. Escreva `<destino>/especificacao.md`: use `contexto/telas/<projeto>/especificacao.*` se existir,
    senao `modelos/especificacao.md`. Fonte: NOTAS.md + mockup aprovado; textos de mensagens exatos;

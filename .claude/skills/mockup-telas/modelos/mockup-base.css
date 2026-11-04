@@ -1,7 +1,7 @@
 /* Base dos mockups da skill mockup-telas. Copiado para contexto/telas/<projeto>/kit/ no levantamento. */
 
 /* Estados: um <section class="estado" id="..."> por estado; #ancora escolhe; sem ancora mostra o primeiro. */
-.estado { display: none; }
+.estado { display: none; scroll-margin-top: 100vh; }
 .estado:target { display: block; }
 body:not(:has(.estado:target)) .estado:first-of-type { display: block; }
 

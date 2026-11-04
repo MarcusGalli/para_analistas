@@ -34,6 +34,12 @@ def externo(ref):
     return ref.startswith(("http:", "https:", "data:", "//", "#", "mailto:"))
 
 
+def remoto(ref, externos):
+    if externos is not None and ref.startswith(("http:", "https:", "//")):
+        externos.append(ref)
+    return True
+
+
 def limpo(ref):
     return ref.split("?")[0].split("#")[0]
 
@@ -46,24 +52,24 @@ def data_uri(caminho):
     return f"data:{tipo};base64,{base64.b64encode(caminho.read_bytes()).decode()}"
 
 
-def embutir_css(css, base, faltando, raiz, vistos=None):
+def embutir_css(css, base, faltando, raiz, externos=None, vistos=None):
     """Embute @import e url() locais; `base` e a pasta do arquivo CSS."""
     vistos = vistos or set()
 
     def troca_import(m):
         ref = m.group(1)
         alvo = (base / limpo(ref)).resolve()
-        if externo(ref):
+        if externo(ref) and remoto(ref, externos):
             return m.group(0)
         if not alvo.is_file() or alvo in vistos:
             faltando.append(rel(alvo, raiz))
             return m.group(0)
         texto = alvo.read_text(encoding="utf-8", errors="replace")
-        return embutir_css(texto, alvo.parent, faltando, raiz, vistos | {alvo})
+        return embutir_css(texto, alvo.parent, faltando, raiz, externos, vistos | {alvo})
 
     def troca_url(m):
         ref = m.group(2).strip()
-        if externo(ref):
+        if externo(ref) and remoto(ref, externos):
             return m.group(0)
         alvo = (base / limpo(ref)).resolve()
         if not alvo.is_file():
@@ -81,7 +87,8 @@ def rel(alvo, raiz):
         return alvo.as_posix()
 
 
-def empacotar(origem, destino):
+def empacotar(origem, destino, externos=None):
+    """Devolve as referencias locais faltando; se `externos` for uma lista, recebe as http(s)/// nao embutidas."""
     origem = Path(origem).resolve()
     base = origem.parent
     html = origem.read_text(encoding="utf-8")
@@ -89,21 +96,21 @@ def empacotar(origem, destino):
 
     def troca_link(m):
         href = HREF.search(m.group(0))
-        if not href or externo(href.group(1)):
+        if not href or (externo(href.group(1)) and remoto(href.group(1), externos)):
             return m.group(0)
         alvo = (base / limpo(href.group(1))).resolve()
         if not alvo.is_file():
             faltando.append(rel(alvo, base))
             return m.group(0)
-        css = embutir_css(alvo.read_text(encoding="utf-8", errors="replace"), alvo.parent, faltando, base)
+        css = embutir_css(alvo.read_text(encoding="utf-8", errors="replace"), alvo.parent, faltando, base, externos)
         return f"<style>\n{css}\n</style>"
 
     def troca_style(m):
-        return m.group(1) + embutir_css(m.group(2), base, faltando, base) + m.group(3)
+        return m.group(1) + embutir_css(m.group(2), base, faltando, base, externos) + m.group(3)
 
     def troca_script(m):
         ref = m.group(3)
-        if externo(ref):
+        if externo(ref) and remoto(ref, externos):
             return m.group(0)
         alvo = (base / limpo(ref)).resolve()
         if not alvo.is_file():
@@ -114,7 +121,7 @@ def empacotar(origem, destino):
 
     def troca_src(m):
         ref = m.group(3)
-        if externo(ref):
+        if externo(ref) and remoto(ref, externos):
             return m.group(0)
         alvo = (base / limpo(ref)).resolve()
         if not alvo.is_file():
@@ -155,9 +162,11 @@ def autoteste():
             encoding="utf-8",
         )
         saida = raiz / "entrega" / "mockup.html"
-        faltando = empacotar(raiz / "v1.html", saida)
+        externos = []
+        faltando = empacotar(raiz / "v1.html", saida, externos)
         html = saida.read_text(encoding="utf-8")
         assert faltando == ["kit/assets/sumiu.png"], faltando
+        assert externos == ["https://exemplo.com/fundo.png"], externos
         assert "<link" not in html, "link de CSS nao foi embutido"
         assert "#123456" in html, "@import nao foi embutido"
         assert "data:font/woff2;base64," in html or "data:application/octet-stream;base64," in html, "fonte nao embutida"
@@ -184,6 +193,11 @@ def autoteste():
         assert all(p.stat().st_size > 0 for p in pngs), "png vazio"
         assert pngs[0].read_bytes() != pngs[1].read_bytes(), "estados geraram o mesmo print (ancora ignorada?)"
         assert sorted(x.name for x in raiz.iterdir()) == ["m.html", "telas"], "copia temporaria ficou para tras"
+        try:
+            prints(pagina, raiz / "telas", ["a", "naoexiste"], 400, 300)
+            raise AssertionError("estado inexistente deveria sair com SystemExit")
+        except SystemExit as e:
+            assert "naoexiste" in str(e), e
     print("autoteste prints: ok")
 
 
@@ -208,11 +222,15 @@ def prints(html, pasta, estados, largura=1366, altura=900):
             f"  uv run ferramentas/mockup.py prints {html} {pasta} {' '.join(estados)}"
         )
     html = Path(html).resolve()
+    texto = html.read_text(encoding="utf-8")
+    sem = [e for e in estados if f'id="{e}"' not in texto and f"id='{e}'" not in texto]
+    if sem:
+        sys.exit(f"Estados nao encontrados em {html.name} (id=\"...\"): {', '.join(sem)}")
     pasta = Path(pasta)
     pasta.mkdir(parents=True, exist_ok=True)
     copia = html.with_name(f".print-{html.name}")
     copia.write_text(
-        html.read_text(encoding="utf-8") + "\n<style>.mk-revisao{display:none!important}</style>\n",
+        texto + "\n<style>.mk-revisao{display:none!important}</style>\n",
         encoding="utf-8",
     )
     gerados = []
@@ -259,8 +277,13 @@ def main():
     if a.autoteste:
         autoteste()
     elif a.cmd == "empacotar":
-        faltando = empacotar(a.origem, a.destino)
+        externos = []
+        faltando = empacotar(a.origem, a.destino, externos)
         print(f"gravado: {a.destino}")
+        if externos:
+            print("AVISO - referencias externas (nao embutidas):")
+            for x in sorted(set(externos)):
+                print(f"  {x}")
         if faltando:
             print("AVISO - referencias locais nao encontradas (ficaram como estao):")
             for f in faltando:
