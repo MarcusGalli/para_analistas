@@ -14,6 +14,9 @@ import argparse
 import base64
 import mimetypes
 import re
+import shutil
+import subprocess
+import time
 import sys
 import tempfile
 from pathlib import Path
@@ -163,6 +166,77 @@ def autoteste():
         assert "https://exemplo.com/fundo.png" in html, "url externa deveria ficar como esta"
         assert 'href="#edicao"' in html, "ancora deveria ficar como esta"
     print("autoteste empacotar: ok")
+    if not achar_edge():
+        print("autoteste prints: PULADO (Edge nao encontrado)")
+        return
+    with tempfile.TemporaryDirectory() as tmp:
+        raiz = Path(tmp)
+        pagina = raiz / "m.html"
+        pagina.write_text(
+            "<style>.estado{display:none;height:100vh}.estado:target{display:block}"
+            "#a{background:#ff0000}#b{background:#0000ff}</style>"
+            '<nav class="mk-revisao">barra</nav>'
+            '<section class="estado" id="a"></section><section class="estado" id="b"></section>',
+            encoding="utf-8",
+        )
+        pngs = prints(pagina, raiz / "telas", ["a", "b"], 400, 300)
+        assert [p.name for p in pngs] == ["01-a.png", "02-b.png"], pngs
+        assert all(p.stat().st_size > 0 for p in pngs), "png vazio"
+        assert pngs[0].read_bytes() != pngs[1].read_bytes(), "estados geraram o mesmo print (ancora ignorada?)"
+        assert sorted(x.name for x in raiz.iterdir()) == ["m.html", "telas"], "copia temporaria ficou para tras"
+    print("autoteste prints: ok")
+
+
+EDGES = [
+    Path(r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"),
+    Path(r"C:\Program Files\Microsoft\Edge\Application\msedge.exe"),
+]
+
+
+def achar_edge():
+    for c in [shutil.which("msedge"), *EDGES]:
+        if c and Path(c).is_file():
+            return str(c)
+    return None
+
+
+def prints(html, pasta, estados, largura=1366, altura=900):
+    edge = achar_edge()
+    if not edge:
+        sys.exit(
+            "Edge nao encontrado. O HTML esta pronto; para gerar os PNGs depois rode:\n"
+            f"  uv run ferramentas/mockup.py prints {html} {pasta} {' '.join(estados)}"
+        )
+    html = Path(html).resolve()
+    pasta = Path(pasta)
+    pasta.mkdir(parents=True, exist_ok=True)
+    copia = html.with_name(f".print-{html.name}")
+    copia.write_text(
+        html.read_text(encoding="utf-8") + "\n<style>.mk-revisao{display:none!important}</style>\n",
+        encoding="utf-8",
+    )
+    gerados = []
+    try:
+        for n, estado in enumerate(estados, 1):
+            png = (pasta / f"{n:02d}-{estado}.png").resolve()
+            png.unlink(missing_ok=True)
+            with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as perfil:
+                subprocess.run(
+                    [edge, "--headless=new", "--disable-gpu", "--hide-scrollbars", "--no-first-run",
+                     f"--user-data-dir={perfil}", f"--window-size={largura},{altura}",
+                     f"--screenshot={png}", f"{copia.as_uri()}#{estado}"],
+                    capture_output=True, timeout=90,
+                )
+            for _ in range(50):  # o Edge pode sair antes de o PNG aparecer no disco
+                if png.is_file() and png.stat().st_size > 0:
+                    break
+                time.sleep(0.2)
+            if not png.is_file():
+                sys.exit(f"Edge nao gerou {png}")
+            gerados.append(png)
+    finally:
+        copia.unlink(missing_ok=True)
+    return gerados
 
 
 def main():
@@ -172,6 +246,12 @@ def main():
     e = sub.add_parser("empacotar")
     e.add_argument("origem", type=Path)
     e.add_argument("destino", type=Path)
+    p = sub.add_parser("prints")
+    p.add_argument("html", type=Path)
+    p.add_argument("pasta", type=Path)
+    p.add_argument("estados", nargs="+")
+    p.add_argument("--largura", type=int, default=1366)
+    p.add_argument("--altura", type=int, default=900)
     a = ap.parse_args()
     if a.autoteste:
         autoteste()
@@ -183,6 +263,9 @@ def main():
             for f in faltando:
                 print(f"  {f}")
             sys.exit(1)
+    elif a.cmd == "prints":
+        for png in prints(a.html, a.pasta, a.estados, a.largura, a.altura):
+            print(f"gerado: {png}")
     else:
         ap.print_help()
 

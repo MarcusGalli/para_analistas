@@ -2,6 +2,7 @@
   "permissions": {
     "allow": [
       "Bash(uv run ferramentas/db.py:*)",
+      "Bash(uv run ferramentas/mockup.py:*)",
       "Bash(svn status:*)",
       "Bash(svn info:*)",
       "Bash(svn log:*)",
