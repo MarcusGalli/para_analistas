@@ -13,6 +13,8 @@ Projetos, Superintendencias, Ordens de Servico (OS), orcamento e entregas.
 | `.secrets/` | Credenciais (`bancos.toml` e outros) | Nao — nunca |
 | `saidas/` | Relatorios de consulta, analises, CSVs e rascunhos | Nao |
 | `ferramentas/db.py` | Consulta somente leitura aos bancos | Sim |
+| `ferramentas/mockup.py` | Empacota mockup autocontido e gera PNGs (skill mockup-telas) | Sim |
+| `contexto/telas/<projeto>/` | Padroes, catalogo e kit visual de cada sistema — **mantidos pela skill mockup-telas** | Sim |
 | `contexto/` | Fichas de projetos, SVN e bancos — **mantidas pelo Claude** | Sim |
 
 ## Configuracao inicial

@@ -14,6 +14,7 @@
 - **Documentacao SVN:** <nome em SVN.md / pasta>
 - **Como rodar / testar:** <comando ou "nao roda localmente: motivo">
 - **Observacoes:** <regras, armadilhas>
+- **Mockups:** <contexto/telas/<nome>/ (levantado no commit <hash>, AAAA-MM-DD) ou "nao levantado">
 - **Atualizado em:** AAAA-MM-DD
 -->
 

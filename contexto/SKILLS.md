@@ -11,6 +11,7 @@ Code e confiar nela, ele oferece instalar. Os demais sao instalados uma vez por 
 | **scrapling** | Raspagem/extracao de dados de paginas web | Ver abaixo |
 | **browser-harness** | Claude usa o seu Chrome real (logado) via DevTools — sistemas web do cliente | Ver abaixo |
 | **notebooklm-py** | Cria cadernos no NotebookLM, adiciona fontes, gera resumos/audios | Ver abaixo |
+| **mockup-telas** | Levanta o padrao de telas de um sistema em `.projetos/` e gera mockups fieis (tela nova ou alteracao), com pacote HTML + PNG + especificacao | Ja vem no repositorio (`.claude/skills/mockup-telas/`) |
 
 ## scrapling — [D4Vinci/Scrapling](https://github.com/D4Vinci/Scrapling)
 
