@@ -21,3 +21,6 @@ __pycache__/
 
 # Instrucoes pessoais do analista para o Claude (nativo do Claude Code)
 CLAUDE.local.md
+
+# Rascunhos do superpowers (subagentes)
+.superpowers/
