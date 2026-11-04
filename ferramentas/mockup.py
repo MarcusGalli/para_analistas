@@ -227,10 +227,13 @@ def prints(html, pasta, estados, largura=1366, altura=900):
                      f"--screenshot={png}", f"{copia.as_uri()}#{estado}"],
                     capture_output=True, timeout=90,
                 )
-            for _ in range(50):  # o Edge pode sair antes de o PNG aparecer no disco
-                if png.is_file() and png.stat().st_size > 0:
-                    break
-                time.sleep(0.2)
+                anterior = None
+                for _ in range(50):  # o Edge pode sair antes de o PNG aparecer (ou ficar pela metade) no disco
+                    atual = png.stat().st_size if png.is_file() else 0
+                    if atual > 0 and atual == anterior:  # tamanho estavel em duas leituras seguidas
+                        break
+                    anterior = atual
+                    time.sleep(0.2)
             if not png.is_file():
                 sys.exit(f"Edge nao gerou {png}")
             gerados.append(png)
